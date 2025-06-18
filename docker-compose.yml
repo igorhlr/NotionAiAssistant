@@ -1,0 +1,125 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: notionia_postgres
+    environment:
+      # Variáveis seguras do PostgreSQL - usando somente Docker Secrets
+      POSTGRES_USER: pguser_5062c672
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB: notionai_22d8279674e0
+      POSTGRES_HOST_AUTH_METHOD: md5
+    secrets:
+      - postgres_password
+      - notioniauser_password
+      - appuser_password
+    volumes:
+      - ${DOCKER_DATA_PATH:-./docker-data}/notion-assistant/data:/var/lib/postgresql/data
+      - ${DOCKER_DATA_PATH:-./docker-data}/notion-assistant/backups:/backups
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    command: ["postgres", "-c", "listen_addresses=*"]
+    restart: unless-stopped
+    networks:
+      - shared_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pguser_5062c672 -d notionai_22d8279674e0"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: notionia_app
+    environment:
+      # Variáveis de configuração do banco (não sensíveis)
+      POSTGRES_USER: pguser_5062c672
+      POSTGRES_DB: notionai_22d8279674e0
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      
+      # Configurações da aplicação
+      ADMIN_EMAIL: admin@notionai-f0033013.local
+      JWT_EXPIRE_MINUTES: 1440
+      DEBUG: "False"
+      ENVIRONMENT: "production"
+      LOG_LEVEL: "INFO"
+      RUNNING_IN_DOCKER: "true"
+      
+      # Configurações opcionais (podem ser vazias)
+      NOTION_PAGE_ID: ""
+    secrets:
+      # Secrets essenciais
+      - postgres_password
+      - notioniauser_password
+      - appuser_password
+      - jwt_secret
+      - admin_password
+      
+      # Secrets opcionais para APIs externas (podem estar vazios)
+      - openai_api_key
+      - notion_api_key
+      - anthropic_api_key
+      - deepseek_api_key
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - shared_network
+    volumes:
+      - ${DOCKER_DATA_PATH:-./docker-data}/notion-assistant/logs:/app/logs
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    labels:
+      - "traefik.enable=true"
+      # API Backend Configuration
+      - "traefik.http.routers.notionia-api.rule=Host(`notionassistant.llmway.com.br`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.notionia-api.entrypoints=websecure"
+      - "traefik.http.routers.notionia-api.tls=true"
+      - "traefik.http.services.notionia-api.loadbalancer.server.port=8080"
+      # Frontend Configuration
+      - "traefik.http.routers.notionia-frontend.rule=Host(`notionassistant.llmway.com.br`) && !PathPrefix(`/api`)"
+      - "traefik.http.routers.notionia-frontend.entrypoints=websecure"
+      - "traefik.http.routers.notionia-frontend.tls=true"
+      - "traefik.http.services.notionia-frontend.loadbalancer.server.port=8501"
+      # Override port based on host port mapping
+      - "traefik.http.routers.notionia-api.service=notionia-api"
+      - "traefik.http.routers.notionia-frontend.service=notionia-frontend"
+
+secrets:
+  # Secrets essenciais para operação da aplicação
+  postgres_password:
+    file: /home/user0/docker-secrets/open-source-secrets/postgres_password
+  notioniauser_password:
+    file: /home/user0/docker-secrets/open-source-secrets/notioniauser_password
+  appuser_password:
+    file: /home/user0/docker-secrets/open-source-secrets/appuser_password
+  jwt_secret:
+    file: /home/user0/docker-secrets/open-source-secrets/jwt_secret
+  admin_password:
+    file: /home/user0/docker-secrets/open-source-secrets/admin_password
+    
+  # Secrets opcionais para APIs externas
+  # Estes podem estar vazios e serão configurados dinamicamente via frontend
+  openai_api_key:
+    file: /home/user0/docker-secrets/open-source-secrets/openai_api_key
+  notion_api_key:
+    file: /home/user0/docker-secrets/open-source-secrets/notion_api_key
+  anthropic_api_key:
+    file: /home/user0/docker-secrets/open-source-secrets/anthropic_api_key
+  deepseek_api_key:
+    file: /home/user0/docker-secrets/open-source-secrets/deepseek_api_key
+
+networks:
+  shared_network:
+    external: true

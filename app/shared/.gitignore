@@ -1,0 +1,41 @@
+# .gitignore para o módulo Shared do NotionAiAssistant
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Arquivos temporários
+*.tmp
+*.temp
+.cache/
+
+# Logs
+logs/
+*.log
+
+# Configurações locais
+*.local.*
+*_local.*
+
+# Arquivos de IDE
+.idea/
+.vscode/
+*.swp
+*.swo

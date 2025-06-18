@@ -1,0 +1,24 @@
+# Este arquivo é gerado automaticamente pelo script update_requirements.sh
+# a partir do arquivo pyproject.toml. Não edite este arquivo manualmente.
+# Última atualização: 20 de maio de 2025
+
+fastapi-users[sqlalchemy]>=14.0.1
+fastapi>=0.115.8
+httpx>=0.28.1
+notion-client>=2.3.0
+openai>=1.63.2
+anthropic>=0.19.1
+pydantic>=2.10.6
+pydantic-settings>=2.7.1
+python-dotenv>=1.0.1
+streamlit>=1.42.2
+tiktoken>=0.9.0
+uvicorn>=0.34.0
+sqlalchemy[asyncio]>=2.0.38
+asyncpg>=0.30.0
+alembic>=1.14.1
+python-jose[cryptography]>=3.4.0
+python-multipart>=0.0.20
+psycopg2-binary>=2.9.9
+passlib[bcrypt]>=1.7.4
+watchdog>=3.0.0

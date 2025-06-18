@@ -1,0 +1,21 @@
+# Este arquivo está mantido para compatibilidade, mas todas as dependências
+# agora são gerenciadas centralmente pelo pyproject.toml na raiz do projeto.
+# 
+# Para instalar as dependências, utilize:
+#   uv pip sync ../requirements.txt
+#
+# Para atualizar as dependências:
+#   ./update_requirements.sh
+#
+# As dependências do backend incluem:
+# - fastapi
+# - uvicorn
+# - openai
+# - anthropic
+# - notion-client
+# - pydantic
+# - python-dotenv
+# - psycopg2-binary
+#
+# Não modifique este arquivo diretamente. Atualize o pyproject.toml na raiz.
+

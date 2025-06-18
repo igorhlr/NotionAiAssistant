@@ -1,0 +1,105 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: notionia_dev_postgres
+    environment:
+      # Variáveis seguras do PostgreSQL - usando somente Docker Secrets
+      POSTGRES_USER: pguser_dev
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB: notionai_dev
+      POSTGRES_HOST_AUTH_METHOD: md5
+    secrets:
+      - postgres_password
+      - notioniauser_password
+      - appuser_password
+    volumes:
+      - ${DOCKER_DATA_PATH:-./docker-data}/notion-assistant/dev/data:/var/lib/postgresql/data
+      - ${DOCKER_DATA_PATH:-./docker-data}/notion-assistant/dev/backups:/backups
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    command: ["postgres", "-c", "listen_addresses=*"]
+    restart: unless-stopped
+    networks:
+      - shared_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pguser_dev -d notionai_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    ports:
+      - "5433:5432"  # Mapeamento para porta diferente para não conflitar com possível instância em produção
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile.dev
+    container_name: notionia_dev_app
+    environment:
+      # Variáveis de configuração do banco (não sensíveis)
+      POSTGRES_USER: pguser_dev
+      POSTGRES_DB: notionai_dev
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      
+      # Configurações da aplicação
+      ADMIN_EMAIL: admin@notionai-dev.local
+      JWT_EXPIRE_MINUTES: 1440
+      DEBUG: "True"
+      ENVIRONMENT: "development"
+      LOG_LEVEL: "DEBUG"
+      RUNNING_IN_DOCKER: "true"
+      
+      # Configurações opcionais (podem ser vazias)
+      NOTION_PAGE_ID: ""
+    secrets:
+      # Secrets essenciais
+      - postgres_password
+      - notioniauser_password
+      - appuser_password
+      - jwt_secret
+      - admin_password
+      
+      # Secrets opcionais para APIs externas (podem estar vazios)
+      - openai_api_key
+      - notion_api_key
+      - anthropic_api_key
+      - deepseek_api_key
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - shared_network
+    volumes:
+      - ${DOCKER_DATA_PATH:-./docker-data}/notion-assistant/dev/logs:/app/logs
+      - ./app:/app  # Montar o código fonte para desenvolvimento (hot reload)
+    ports:
+      - "8080:8080"  # API
+      - "8501:8501"  # Frontend
+
+secrets:
+  # Secrets essenciais para operação da aplicação
+  postgres_password:
+    file: ./config/secrets/development/postgres_password
+  notioniauser_password:
+    file: ./config/secrets/development/notioniauser_password
+  appuser_password:
+    file: ./config/secrets/development/appuser_password
+  jwt_secret:
+    file: ./config/secrets/development/jwt_secret
+  admin_password:
+    file: ./config/secrets/development/admin_password
+    
+  # Secrets opcionais para APIs externas
+  openai_api_key:
+    file: ./config/secrets/development/openai_api_key
+  notion_api_key:
+    file: ./config/secrets/development/notion_api_key
+  anthropic_api_key:
+    file: ./config/secrets/development/anthropic_api_key
+  deepseek_api_key:
+    file: ./config/secrets/development/deepseek_api_key
+
+networks:
+  shared_network:
+    external: true

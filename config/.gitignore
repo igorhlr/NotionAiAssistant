@@ -1,0 +1,41 @@
+# .gitignore para a pasta de configuração do NotionAiAssistant
+
+# Arquivos de configuração de produção
+**/production/*.yaml
+**/production/*.yml
+**/production/*.json
+**/production/*.env
+**/production/*.toml
+**/production/*.conf
+
+# Arquivos de configuração com segredos
+**/secrets/**
+!**/secrets/README.md
+!**/secrets/.gitkeep
+
+# Certificados e chaves
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*.priv
+*.pub
+
+# Arquivos de ambiente
+.env
+.env.*
+!.env.example
+
+# Configurações locais
+*.local.*
+*_local.*
+local_*.*
+local-env.conf
+
+# Manter os templates e exemplos
+!*.example
+!*.template
+!*.sample
+
+env/.env

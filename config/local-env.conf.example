@@ -1,0 +1,15 @@
+# Configuração local para desenvolvimento
+# Modifique este arquivo para definir o caminho de dados para o Docker no seu ambiente local
+# Deixe em branco para usar o caminho padrão do sistema
+
+# Exemplo para macOS:
+# DOCKER_DATA_PATH=/Users/seu_usuario/Documents/Projetos/NotionAiAssistant
+
+# Exemplo para Linux:
+# DOCKER_DATA_PATH=/home/seu_usuario/projetos/NotionAiAssistant
+
+# Exemplo para Windows (usando caminho WSL):
+# DOCKER_DATA_PATH=/mnt/c/Users/seu_usuario/Documents/Projetos/NotionAiAssistant
+
+# Defina seu caminho personalizado abaixo:
+DOCKER_DATA_PATH=""

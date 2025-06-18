@@ -1,0 +1,59 @@
+[project]
+name = "notion-ai-assistant"
+version = "0.1.0"
+description = "Generate content with AI and save directly to Notion"
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "NotionAiAssistant Team"}
+]
+
+dependencies = [
+    "fastapi-users[sqlalchemy]>=14.0.1",
+    "fastapi>=0.115.8",
+    "httpx>=0.28.1",
+    "notion-client>=2.3.0",
+    "openai>=1.63.2",
+    "anthropic>=0.19.1",
+    "pydantic>=2.10.6",
+    "pydantic-settings>=2.7.1",
+    "python-dotenv>=1.0.1",
+    "streamlit>=1.42.2",
+    "tiktoken>=0.9.0",
+    "uvicorn>=0.34.0",
+    "sqlalchemy[asyncio]>=2.0.38",
+    "asyncpg>=0.30.0",
+    "alembic>=1.14.1",
+    "python-jose[cryptography]>=3.4.0",
+    "python-multipart>=0.0.20",
+    "psycopg2-binary>=2.9.9",
+    "passlib[bcrypt]>=1.7.4",
+    "watchdog>=3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.2",
+    "pytest-asyncio>=0.23.5",
+    "black>=23.9.1",
+    "isort>=5.12.0",
+    "flake8>=6.1.0",
+    "mypy>=1.5.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100

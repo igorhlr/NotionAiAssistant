@@ -1,0 +1,38 @@
+# Core development dependencies for CI/CD
+# Keeping minimal to avoid conflicts
+
+# Core Python packages
+setuptools>=68.0.0
+wheel>=0.41.0
+pip>=23.0.0
+
+# Testing framework
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+
+# Code quality tools
+black>=23.7.0
+isort>=5.12.0
+flake8>=6.0.0
+mypy>=1.5.0
+
+# Type stubs for better type checking
+types-requests>=2.31.0
+types-setuptools>=68.0.0
+
+# FastAPI and related (minimal versions to avoid conflicts)
+fastapi>=0.100.0
+uvicorn>=0.23.0
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+
+# For async testing
+httpx>=0.24.0
+
+# Database (minimal for testing)
+sqlalchemy>=2.0.0
+asyncpg>=0.28.0
+
+# Optional: Coverage reporting
+coverage>=7.2.0

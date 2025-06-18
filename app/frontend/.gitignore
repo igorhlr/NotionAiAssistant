@@ -1,0 +1,36 @@
+# .gitignore para o Frontend do NotionAiAssistant
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/config.toml
+
+# Caches e arquivos temporários
+__pycache__/
+*.py[cod]
+*$py.class
+.cache/
+.temp/
+.tmp/
+
+# Arquivos de ambiente
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+
+# Arquivos locais de desenvolvimento
+*.local.py
+*.dev.py
+*_local.*
+
+# Arquivos de IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Dependências
+node_modules/
