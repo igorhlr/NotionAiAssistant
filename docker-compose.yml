@@ -81,7 +81,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.3' # Reduzido de 0.5 para 0.3
+          cpus: '0.3' # Reduzido de 0.5 para 0.3 
           memory: 384M # Reduzido de 512M para 384M
         reservations:
           cpus: '0.1'
